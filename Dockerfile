@@ -1,5 +1,4 @@
-FROM gliderlabs/alpine:3.4
-MAINTAINER Pete Ward <peteward44@gmail.com>
+FROM alpine
 
 RUN apk add --no-cache bash curl
 
