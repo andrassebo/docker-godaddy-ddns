@@ -1,7 +1,7 @@
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 source $DIR/env.sh
- 
+
 # GoDaddy.sh v1.0 by Nazar78 @ TeaNazaR.com
 ###########################################
 # Simple DDNS script to update GoDaddy's DNS. Just schedule every 5mins in crontab.
@@ -102,7 +102,7 @@ if [ "$(cat ${CachedIP} 2>/dev/null)" != "${PublicIP}" ];then
     -H"Content-type: application/json" \
     https://api.godaddy.com/v1/domains/${Domain}/records/${Type}/${Name} \
     -d "{\"data\":\"${PublicIP}\",\"ttl\":${TTL}}" 2>/dev/null)
-    if [ $? -eq 0 ] && [ "${Update}" = "{}" ];then
+    if [ $? -eq 0 ] && [ "${Update}" = null ];then
       echo -n ${PublicIP}>${CachedIP}
       echo "Success!"
       eval ${SuccessExec}
