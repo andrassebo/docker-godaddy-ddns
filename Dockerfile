@@ -19,5 +19,3 @@ RUN chmod o+rwx /tmp
 
 # run crond from busybox
 CMD /bin/bash /setup_env && crond -l 2 -f
-
-
