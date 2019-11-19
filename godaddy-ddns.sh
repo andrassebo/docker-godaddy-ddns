@@ -42,7 +42,7 @@ fi
 
 # Time To Live in seconds, minimum default 600 (10mins).
 # If your public IP seldom changes, set it to 3600 (1hr) or more for DNS servers cache performance.
-TTL=600
+TTL=3600
  
 # Writable path to last known Public IP record cached. Best to place in tmpfs.
 CachedIP=/tmp/current_ip
@@ -89,8 +89,8 @@ else
 fi
 if [ "$(cat ${CachedIP} 2>/dev/null)" != "${PublicIP}" ];then
   echo -n "Checking '${Domain}' IP records from 'GoDaddy'..."
-  Check=$(${Curl} -kLsH"Authorization: sso-key ${Key}:${Secret}" \
-  -H"Content-type: application/json" \
+  Check=$(${Curl} -kLsH'Authorization: sso-key ${Key}:${Secret}' \
+  -H 'Content-type: application/json' \
   https://api.godaddy.com/v1/domains/${Domain}/records/${Type}/${Name} \
   2>/dev/null|sed -r 's/.+data":"(.+)","t.+/\1/g' 2>/dev/null)
   if [ $? -eq 0 ] && [ "${Check}" = "${PublicIP}" ];then
@@ -98,10 +98,10 @@ if [ "$(cat ${CachedIP} 2>/dev/null)" != "${PublicIP}" ];then
     echo -e "unchanged!\nCurrent 'Public IP' matches 'GoDaddy' records. No update required!"
   else
     echo -en "changed!\nUpdating '${Domain}'..."
-    Update=$(${Curl} -kLsXPUT -H"Authorization: sso-key ${Key}:${Secret}" \
-    -H"Content-type: application/json" \
+    Update=$(${Curl} -kLsXPUT -H'Authorization: sso-key ${Key}:${Secret}' \
+    -H'Content-type: application/json' \
     https://api.godaddy.com/v1/domains/${Domain}/records/${Type}/${Name} \
-    -d "{\"data\":\"${PublicIP}\",\"ttl\":${TTL}}" 2>/dev/null)
+    -d '[{\"data\":\"${PublicIP}\",\"ttl\":${TTL}}]' 2>/dev/null)
     if [ $? -eq 0 ] && [ "${Update}" = null ];then
       echo -n ${PublicIP}>${CachedIP}
       echo "Success!"
